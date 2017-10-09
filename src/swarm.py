@@ -22,7 +22,9 @@ class Swarm(object):
         self.inertia_factor = inertia_factor
 
     def optimize(self):
-        pass
+        self.initialize_particles()
+
+        return (0, 0)
 
     def initialize_particles(self):
         pass
