@@ -37,10 +37,14 @@ class Swarm(object):
     def optimize(self):
         self.initialize_particles()
 
-        pp.pprint(self.particles)
-        print('BEST', self.g_best)
+        for n in range(1, self.niterations):
+            for p in self.particles:
+                p.update_velocity(self.g_best, self.personal_weight, self.global_weight, self.inertia_factor)
+                p.update_position(self.fn_ub, self.fn_lb)
 
-        return self.g_best.position
+            self.update_fitness()
+
+        return self.g_best
 
     def initialize_particles(self):
         self.particles = [self.random_particle() for i in range(self.nparticles)]
@@ -49,7 +53,9 @@ class Swarm(object):
         return self.particles
 
     def fitness(self, position):
-        return self.fn_eval(position)
+        result = self.fn_eval(position)
+
+        return result
 
     def update_fitness(self):
         for p in self.particles:
@@ -58,24 +64,17 @@ class Swarm(object):
             if p.fitness < self.fitness(p.best_pos):
                 p.best_pos = p.position
 
-            if p.fitness < self.g_best.fitness:
-                self.g_best = p
-
-
-    def update_velocity(self):
-        pass
-
-    def update_position(self):
-        pass
+            if p.fitness < self.fitness(self.g_best):
+                self.g_best = p.position
 
     def get_gobal_best(self):
         best_particle = min(self.particles, key=attrgetter('fitness'))
 
-        return best_particle
+        return best_particle.position
 
     def random_particle(self):
         r_position = self.random_vector(self.fn_ub, self.fn_lb)
-        r_velocity = self.random_vector(self.fn_ub, self.fn_lb)
+        r_velocity = self.random_vector(np.array([1, 1]), np.array([-1, -1]))
 
         return Particle(r_position, r_velocity, self.fitness(r_position))
 
