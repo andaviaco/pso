@@ -7,5 +7,8 @@ class Particle(object):
         super(Particle).__init__()
 
         self.position = initial_position
-        self.velocity = velocity
+        self.velocity = initial_velocity
         self.best_pos = initial_position
+
+    def __repr__(self):
+        return f'<Particle pos: {self.position} velocity: {self.velocity} >'
